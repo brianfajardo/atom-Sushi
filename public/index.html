@@ -3,19 +3,27 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
-    <p>Welcome to the chat app!</p>
+<body class="chat">
+    <div class="chat-sidebar">
+        <h3>#Friends</h3>
+        <div id="users"></div>
+    </div>
 
-    <ol id="messages"></ol>
+    <div class="chat-main">
+        <ol class="chat-messages" id="messages"></ol>
 
-    <form id="message-form">
-        <input name="message" type="text" placeholder="Say something!" />
-        <button>Send</button>
-    </form>
+        <div class="chat-footer">
+            <form id="message-form">
+                <input name="message" type="text" placeholder="Good vibes!" required autofocus autocomplete="off"/>
+                <button>Send</button>
+            </form>
 
-    <button id="send-location">Send Location</button>
+            <button id="send-location">Send location</button>
+        </div>
+    </div>
 
     <!-- client library the loads on the browser side (socket.io-client) -->
     <script src="/socket.io/socket.io.js"></script>
