@@ -6,11 +6,6 @@ const socket = io();
 // Using vanilla JS function notation to allow for mobile support
 socket.on('connect', function () {
     console.log('Connected to server.');
-
-    socket.emit('createMessage', {
-        from: 'CLIENT',
-        text: 'I am a message being sent to the server'
-    });
 });
 
 socket.on('disconnect', function () {
