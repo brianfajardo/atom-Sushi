@@ -8,19 +8,9 @@
 <body>
     <p>Welcome to the chat app!</p>
 
+    <!-- client library the loads on the browser side (socket.io-client) -->
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        // Making a request from the client to open up a socket to the web server and maintain the connection
-        const socket = io();
-
-        socket.on('connect', () => {
-            console.log('Connected to server.')
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from server.')
-        });
-    </script>
+    <script src="/js/index.js"></script>
 </body>
 
 </html>
