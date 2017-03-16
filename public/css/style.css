@@ -52,7 +52,7 @@ button:disabled {
   background: linear-gradient(325deg, rgba(39,107,130,1) 0%, rgba(49,84,129,1) 100%); /* w3c */
 }
 
-.centered-form__form {
+.centered-form-form {
   background: rgba(250, 250, 250, 0.9);
   border: 1px solid #e1e1e1;
   border-radius: 5px;

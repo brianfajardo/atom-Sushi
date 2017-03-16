@@ -3,6 +3,24 @@
 
 const socket = io();
 
+function scrollToBottom() {
+    // Selectors
+    const messages = $('#messages');
+    const newMessage = messages.children('li:last-child');
+
+    // Heights
+    const clientHeight = messages.prop('clientHeight'); /* get property value */
+    const scrollTop = messages.prop('scrollTop');
+    const scrollHeight = messages.prop('scrollHeight');
+    const newMessageHeight = newMessage.innerHeight();
+    const lastMessageHeight = newMessage.prev().innerHeight();
+
+    // if client meets min scroll height req should auto scroll to the bottom/latest message
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);
+    }
+}
+
 // Using vanilla JS function notation to allow for mobile support
 socket.on('connect', function () {
     console.log('Connected to server.');
@@ -25,6 +43,7 @@ socket.on('newMessage', (msg) => {
     });
 
     $('#messages').append(html);
+    scrollToBottom();
 });
 
 socket.on('newLocationMessage', (msg) => {
@@ -38,6 +57,7 @@ socket.on('newLocationMessage', (msg) => {
     });
 
     $('#messages').append(html);
+    scrollToBottom();
 });
 
 $('#message-form').on('submit', function (e) {
