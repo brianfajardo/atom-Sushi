@@ -13,19 +13,21 @@ socket.on('disconnect', function () {
 });
 
 socket.on('newMessage', (msg) => {
-    console.log('newMessage', msg);
+    const formattedTime = moment(msg.createdAt).format('h:mm a');
+
     const li = $('<li></li>');
-    li.text(`${msg.from}: ${msg.text}`);
+    li.text(`${msg.from} ${formattedTime}: ${msg.text}`);
 
     $('#messages').append(li);
 });
 
 socket.on('newLocationMessage', (msg) => {
+    const formattedTime = moment(msg.createdAt).format('h:mm a');
     const li = $('<li></li>');
     // _blank opens the linked document in a new window or tab so user isn't kicked from chatroom!
     const a = $('<a target="_blank">My current location</a>');
 
-    li.text(`${msg.from}: `);
+    li.text(`${msg.from} ${formattedTime}: `);
     // setting a attribute
     a.attr('href', msg.url);
     li.append(a);
