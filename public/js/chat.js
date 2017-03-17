@@ -24,10 +24,31 @@ function scrollToBottom() {
 // Using vanilla JS function notation to allow for mobile support
 socket.on('connect', function () {
     console.log('Connected to server.');
+    const params = $.deparam(window.location.search);
+
+    socket.emit('join', params, function (err) {
+        if (err) {
+            alert(err);
+            // if err redirect user back to join page
+            window.location.href = '/';
+        } else {
+            console.log('No errors');
+        }
+    });
 });
 
 socket.on('disconnect', function () {
     console.log('Disconnected from server.');
+});
+
+socket.on('updateUserList', function(users) {
+    const ol = $('<ol></ol>');
+
+    users.forEach(function (user) {
+        ol.append($('<li></li>').text(user));
+    });
+
+    $('#users').html(ol);
 });
 
 socket.on('newMessage', (msg) => {

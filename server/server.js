@@ -4,6 +4,8 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
+const { isRealString } = require('./utils/validation');
+const { Users } = require('./utils/users');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -21,13 +23,36 @@ const io = socketIO(server);
 
 app.use(express.static(publicPath));
 
+const users = new Users();
+
 // Register a connection event listener
 io.on('connection', (socket) => {
-    console.log('New user connected.');
+    socket.on('join', (params, callback) => {
+        if (!isRealString(params.name) || !isRealString(params.room)) {
+            // Stop code if invalid
+            return callback('Name and room name are required.');
+        }
 
-    socket.emit('newMessage', generateMessage('Brian\'s Third-Eye', 'Welcome to the chat app!'));
+        // Join by same room name
+        socket.join(params.room);
 
-    socket.broadcast.emit('newMessage', generateMessage('Brian\'s Third-Eye', 'New user joined.'));
+        // first remove user from previous room, then add to new room
+        users.removeUser(socket.id);
+        users.addUser(socket.id, params.name, params.room);
+
+        // update user list
+        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+
+        // io.emit -> io.to('fight club').emit
+        // socket.broadcast.emit -> socket.broadcast.to('fight club').emit
+        // socket.emit
+
+        socket.emit('newMessage', generateMessage('God King Odin', 'You have chosen worthy to be of my chat room. Speak amongst yourselves!'));
+
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('God King Odin', `${params.name} has joined the room.`));
+
+        callback();
+    });
 
     socket.on('createMessage', (msg, callback) => {
         console.log('createMessage', msg);
@@ -36,11 +61,17 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Brian\'s Third-Eye', coords.latitude, coords.longitude));
+        io.emit('newLocationMessage', generateLocationMessage('God King Odin', coords.latitude, coords.longitude));
     });
 
     socket.on('disconnect', () => {
-        console.log('User disconnected from server.');
+        const user = users.removeUser(socket.id);
+
+        // if a user was removed
+        if (user) {
+            io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+            io.to(user.room).emit('newMessage', generateMessage('God King Odin', `${user.name} has left.`))
+        }
     });
 });
 
